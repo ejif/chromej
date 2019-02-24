@@ -1,0 +1,12 @@
+
+dependencies {
+    compile project(':ws-protocol')
+    compile "io.github.openfeign:feign-jackson:10.0.1"
+    compile "org.glassfish.tyrus:tyrus-container-grizzly-client:1.15"
+    compile "org.slf4j:slf4j-api:1.7.25"
+
+    testCompile "ch.qos.logback:logback-classic:1.2.3"
+    testCompile "junit:junit:4.12"
+    testCompile "org.assertj:assertj-core:3.11.0"
+}
+

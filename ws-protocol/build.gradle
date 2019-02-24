@@ -1,0 +1,9 @@
+
+dependencies {
+    compile "org.projectlombok:lombok:1.16.18"
+    compile "com.fasterxml.jackson.core:jackson-annotations:2.9.8"
+}
+
+tasks.compileJava.dependsOn(':ws-protocol-generator:generate')
+tasks.eclipse.dependsOn(':ws-protocol-generator:generate')
+
