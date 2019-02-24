@@ -1,10 +1,13 @@
+/*
+ * Copyright © 2019 Jenny Liang
+ */
+
 package io.github.ejif.chromej;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
-import io.github.ejif.chromej.ChromeJ;
 import io.github.ejif.chromej.protocol.WsProtocol;
 import io.github.ejif.chromej.protocol.runtime.EvaluateRequest;
 import io.github.ejif.chromej.protocol.runtime.EvaluateResponse;

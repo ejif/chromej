@@ -1,3 +1,7 @@
+/*
+ * Copyright © 2019 Jenny Liang
+ */
+
 package io.github.ejif.chromej;
 
 import java.io.IOException;
@@ -28,6 +32,10 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Represents a target that has a WebSocket connection established with ChromeJ. Use
+ * {@link #getProtocol()} to execute commands through the WebSocket connection.
+ */
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ConnectedTarget implements AutoCloseable {
 
@@ -42,6 +50,19 @@ public final class ConnectedTarget implements AutoCloseable {
 
     private Session session;
 
+    /**
+     * Establishes a WebSocket connection at the given URL.
+     *
+     * @param websocketDebuggerUrl
+     *            The URL to connect to
+     * @param timeoutMillis
+     *            How long to wait for a response to each command executed over the websocket
+     *            connection
+     * @return The {@link ConnectedTarget} instance
+     * @throws DeploymentException
+     * @throws InterruptedException
+     * @throws IOException
+     */
     public static ConnectedTarget initialize(String websocketDebuggerUrl, long timeoutMillis)
             throws DeploymentException, InterruptedException, IOException {
         ConnectedTarget connectedTarget = new ConnectedTarget(timeoutMillis);
@@ -55,6 +76,11 @@ public final class ConnectedTarget implements AutoCloseable {
         return connectedTarget;
     }
 
+    /**
+     * Gets the {@link WsProtocol} instance to execute generic commands
+     *
+     * @return The {@link WsProtocol} instance
+     */
     public WsProtocol getProtocol() {
         return createProxy(WsProtocol.class, (proxy, method, args) -> {
             return createDomainProxy(method.getReturnType());

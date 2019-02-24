@@ -1,7 +1,14 @@
+/*
+ * Copyright © 2019 Jenny Liang
+ */
+
 package io.github.ejif.chromej;
 
 import lombok.Data;
 
+/**
+ * Object returned by {@link HttpProtocol#getTargets()} and {@link HttpProtocol#newTab()}.
+ */
 @Data
 public final class WsTarget {
 

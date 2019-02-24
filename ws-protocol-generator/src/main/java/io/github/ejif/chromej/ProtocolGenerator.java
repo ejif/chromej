@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2019 Jenny Liang
+ */
 
 package io.github.ejif.chromej;
 
@@ -12,6 +15,7 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Modifier;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,7 +90,7 @@ public final class ProtocolGenerator {
         TypeSpec.Builder spec = TypeSpec.interfaceBuilder(domain.domain)
             .addModifiers(Modifier.PUBLIC);
         if (domain.description != null)
-            spec.addJavadoc("$L\n", domain.description);
+            spec.addJavadoc("$L\n", StringEscapeUtils.escapeHtml4(domain.description));
 
         if (domain.types != null)
             for (Type type : domain.types)
@@ -97,15 +101,17 @@ public final class ProtocolGenerator {
                 MethodSpec.Builder method = MethodSpec.methodBuilder(command.name)
                     .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT);
                 if (command.description != null)
-                    method.addJavadoc("$L\n", command.description);
+                    method.addJavadoc("$L\n", StringEscapeUtils.escapeHtml4(command.description));
                 if (command.parameters != null) {
                     String simpleName = WordUtils.capitalize(command.name) + "Request";
                     method.addParameter(ClassName.get(package_, simpleName), "request");
+                    method.addJavadoc("@param request the request\n");
                     generateClass(domain.domain, simpleName, null, null, command.parameters, null, null);
                 }
                 if (command.returns != null) {
                     String simpleName = WordUtils.capitalize(command.name) + "Response";
                     method.returns(ClassName.get(package_, simpleName));
+                    method.addJavadoc("@return the response\n", simpleName);
                     generateClass(domain.domain, simpleName, null, null, command.returns, null, null);
                 }
                 spec.addMethod(method.build());
@@ -142,7 +148,7 @@ public final class ProtocolGenerator {
                 : TypeSpec.enumBuilder(simpleName);
         spec.addModifiers(Modifier.PUBLIC);
         if (description != null)
-            spec.addJavadoc("$L\n", description);
+            spec.addJavadoc("$L\n", StringEscapeUtils.escapeHtml4(description));
 
         if (fields != null) {
             spec.addAnnotation(AllArgsConstructor.class);
@@ -226,7 +232,7 @@ public final class ProtocolGenerator {
         FieldSpec.Builder field_ = FieldSpec.builder(typeName, fieldName)
             .addModifiers(Modifier.PRIVATE, Modifier.FINAL);
         if (field.description != null)
-            field_.addJavadoc("$L\n", field.description);
+            field_.addJavadoc("$L\n", StringEscapeUtils.escapeHtml4(field.description));
         return field_.build();
     }
 

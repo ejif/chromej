@@ -1,9 +1,16 @@
+/*
+ * Copyright © 2019 Jenny Liang
+ */
+
 package io.github.ejif.chromej;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 
+/**
+ * Object returned by {@link HttpProtocol#getBrowser()}.
+ */
 @Data
 public final class Browser {
 
