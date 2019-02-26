@@ -8,7 +8,11 @@ ChromeJ is a Java library for interfacing with Chrome or Chrome Headless through
 
 1. Add the following maven coordinates to your project:
 
-    [TODO]
+        <dependency>
+            <groupId>io.github.ejif.chromej</groupId>
+            <artifactId>chromej</artifactId>
+            <version>{version}</version>
+        </dependency>
 
 1. Use the ChromeJ library to interface with Chrome:
 
