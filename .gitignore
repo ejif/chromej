@@ -5,5 +5,6 @@
 .settings
 bin/
 build/
+gradle.properties
 ws-protocol/src
 
