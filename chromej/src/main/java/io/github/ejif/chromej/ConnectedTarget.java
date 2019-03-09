@@ -118,7 +118,7 @@ public final class ConnectedTarget implements AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws IOException {
         log.debug("Closing websocket session.");
         session.close();
     }
