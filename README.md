@@ -16,13 +16,10 @@ ChromeJ is a Java library for interfacing with Chrome or Chrome Headless through
 
 1. Use the ChromeJ library to interface with Chrome:
 
-        WsProtocol ws = ChromeJ.create()
-            .newTab()
-            .getProtocol();
-        EvaluateResponse result = ws.getRuntime().evaluate(EvaluateRequest.builder()
-            .expression("1 + 1")
-            .build());
-        assertThat(result.getResult().getValue()).isEqualTo(2);
+        try (ConnectedTarget target = ChromeJ.create().newTab()) {
+            assertThat(target.evaluate("1 + 1")).isEqualTo(2);
+            target.closeTab();
+        }
 
 ## API details
 
@@ -32,44 +29,52 @@ ChromeJ assumes that Chrome's debugging port is at `http://localhost:9222` by de
 
     // these three calls do the same thing
     ChromeJ.create();
-    ChromeJ.create('localhost', 9222, false);
-    ChromeJ.create('http://localhost:9222');
+    ChromeJ.create("localhost", 9222, false);
+    ChromeJ.create("http://localhost:9222");
 
 ### Fetching and creating targets (Chrome tabs)
 
 Every tab in Chrome is a separate _target_, and each target has a distinct websocket URL that can be connected to in order to control that target. Chrome provides an HTTP protocol to fetch targets and create new targets. In ChromeJ, use the following code:
 
     HttpProtocol http = ChromeJ.create().getHttpProtocol();
-    List<WsTarget> targets = http.getTargets(); // get all targets
-    WsTarget newTarget = http.newTab(); // create a new target
+    List<Target> targets = http.getTargets(); // get all targets
+    Target newTarget = http.newTab(); // create a new target
 
 ### Establishing a WebSocket connection to a target
 
-Every `WsTarget` object has a `websocketDebuggerUrl` field. This can be used to initialize a `ConnectedTarget` object, which establishes a websocket connection with Chrome at that target. The `ConnectedTarget` object provides a `getProtocol()` method which provides the full API shown in https://chromedevtools.github.io/devtools-protocol/.
+You can connect to a target by initializing a `ConnectedTarget` object, which establishes a websocket connection with Chrome at that target. The `ConnectedTarget` object provides a `getProtocol()` method which provides the full API shown in https://chromedevtools.github.io/devtools-protocol/.
 
     HttpProtocol http = ChromeJ.create().getHttpProtocol();
 
     /*
      * Initialize a ConnectedTarget by passing in two parameters:
-     * - websocketDebuggerUrl, which can be obtained from the target
+     * - target, a target obtained from ChromeJ
      * - websocketTimeoutMillis, how long to wait for a response for each command
      */
-    String websocketDebuggerUrl = http.newTab().getWebsocketDebuggerUrl();
-    int websocketTimeoutMillis = 10_000;
-    WsProtocol ws = ConnectedTarget.initialize(webSocketDebuggerUrl, websocketTimeoutMillis)
-        .getProtocol();
+    Target target = http.newTab();
+    int webSocketTimeoutMillis = 10_000;
+    try (ConnectedTarget target = new ConnectedTarget(http.newTab(), webSocketTimeoutMillis)) {
+        // corresponds to https://chromedevtools.github.io/devtools-protocol/tot/Runtime#method-evaluate
+        EvaluateResponse result = target.getProtocol().getRuntime().evaluate(EvaluateRequest.builder()
+            .expression("1 + 1")
+            .build());
+    }
 
-    // corresponds to https://chromedevtools.github.io/devtools-protocol/tot/Runtime#method-evaluate
-    EvaluateResponse result = ws.getRuntime().evaluate(EvaluateRequest.builder()
-        .expression("1 + 1")
-        .build());
 
 ### Convenience functions
 
 `ChromeJ` provides a `newTab()` convenience function which creates a new tab and returns the connected target with much less code:
 
-    WsProtocol ws = ChromeJ.create()
-        .newTab()
-        .getProtocol();
-    // execute commands for this target
+    try (ConnectedTarget target = ChromeJ.create().newTab()) {
+        // execute commands for this target
+    }
+
+The ConnectedTarget also contains convenience functions for common tasks, such as navigating to a page, fetching the HTML, and executing Javascript:
+
+    try (ConnectedTarget target = ChromeJ.create().newTab()) {
+        target.navigate("url");
+        target.wait(100); // wait 100 milliseconds
+        String outerHtml = target.getOuterHtml();
+        int value = target.evaluate("1 + 1");
+    }
 
