@@ -17,8 +17,8 @@ public interface HttpProtocol {
     Browser getBrowser();
 
     @RequestLine("GET /json/list")
-    List<WsTarget> getTargets();
+    List<Target> getTargets();
 
     @RequestLine("GET /json/new")
-    WsTarget newTab();
+    Target newTab();
 }

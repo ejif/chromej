@@ -10,7 +10,7 @@ import lombok.Data;
  * Object returned by {@link HttpProtocol#getTargets()} and {@link HttpProtocol#newTab()}.
  */
 @Data
-public final class WsTarget {
+public final class Target {
 
     private final String description;
     private final String devtoolsFrontendUrl;

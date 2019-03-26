@@ -22,7 +22,6 @@ import lombok.Data;
 public final class ChromeJ {
 
     private final HttpProtocol httpProtocol;
-    private int websocketTimeoutMillis = 10_000;
 
     private ChromeJ(String url) {
         this.httpProtocol = Feign.builder()
@@ -73,21 +72,21 @@ public final class ChromeJ {
     }
 
     /**
-     * Creates a websocket connection with the browser target, which can be used to fetch targets
-     * and create new ones.
+     * Creates a WebSocket connection with the browser, which can be used to fetch targets and
+     * create new ones.
      *
-     * @return The {@link ConnectedTarget} instance
+     * @return The {@link ConnectedWebSocket} instance
      * @throws DeploymentException
      * @throws InterruptedException
      * @throws IOException
      */
-    public ConnectedTarget getBrowser() throws DeploymentException, InterruptedException, IOException {
+    public ConnectedBrowser getBrowser() throws DeploymentException, InterruptedException, IOException {
         Browser browser = httpProtocol.getBrowser();
-        return ConnectedTarget.initialize(browser.getWebSocketDebuggerUrl(), websocketTimeoutMillis);
+        return new ConnectedBrowser(browser, ConnectedWebSocket.DEFAULT_TIMEOUT_MILLIS);
     }
 
     /**
-     * Opens a new tab and creates a websocket connection with it.
+     * Opens a new tab and creates a WebSocket connection with it.
      *
      * @return The {@link ConnectedTarget} instance
      * @throws DeploymentException
@@ -95,7 +94,7 @@ public final class ChromeJ {
      * @throws IOException
      */
     public ConnectedTarget newTab() throws DeploymentException, InterruptedException, IOException {
-        WsTarget target = httpProtocol.newTab();
-        return ConnectedTarget.initialize(target.getWebSocketDebuggerUrl(), websocketTimeoutMillis);
+        Target target = httpProtocol.newTab();
+        return new ConnectedTarget(target, ConnectedWebSocket.DEFAULT_TIMEOUT_MILLIS);
     }
 }
