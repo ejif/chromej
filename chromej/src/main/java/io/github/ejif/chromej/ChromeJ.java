@@ -4,11 +4,8 @@
 
 package io.github.ejif.chromej;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import javax.websocket.DeploymentException;
 
 import feign.Feign;
 import feign.jackson.JacksonDecoder;
@@ -76,11 +73,10 @@ public final class ChromeJ {
      * create new ones.
      *
      * @return The {@link ConnectedWebSocket} instance
-     * @throws DeploymentException
-     * @throws InterruptedException
-     * @throws IOException
+     * @throws ConnectionException
+     *             if an error occurred when establishing a connection
      */
-    public ConnectedBrowser getBrowser() throws DeploymentException, InterruptedException, IOException {
+    public ConnectedBrowser getBrowser() throws ConnectionException {
         Browser browser = httpProtocol.getBrowser();
         return new ConnectedBrowser(browser, ConnectedWebSocket.DEFAULT_TIMEOUT_MILLIS);
     }
@@ -89,11 +85,10 @@ public final class ChromeJ {
      * Opens a new tab and creates a WebSocket connection with it.
      *
      * @return The {@link ConnectedTarget} instance
-     * @throws DeploymentException
-     * @throws InterruptedException
-     * @throws IOException
+     * @throws ConnectionException
+     *             if an error occurred when establishing a connection
      */
-    public ConnectedTarget newTab() throws DeploymentException, InterruptedException, IOException {
+    public ConnectedTarget newTab() throws ConnectionException {
         Target target = httpProtocol.newTab();
         return new ConnectedTarget(target, ConnectedWebSocket.DEFAULT_TIMEOUT_MILLIS);
     }

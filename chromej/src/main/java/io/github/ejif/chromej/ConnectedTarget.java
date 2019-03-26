@@ -1,9 +1,5 @@
 package io.github.ejif.chromej;
 
-import java.io.IOException;
-
-import javax.websocket.DeploymentException;
-
 import io.github.ejif.chromej.protocol.WsProtocol;
 import io.github.ejif.chromej.protocol.dom.GetDocumentRequest;
 import io.github.ejif.chromej.protocol.dom.GetOuterHTMLRequest;
@@ -26,11 +22,10 @@ public final class ConnectedTarget extends ConnectedWebSocket {
      * @param timeoutMillis
      *            How long to wait for a response to each command executed over the WebSocket
      *            connection
-     * @throws DeploymentException
-     * @throws InterruptedException
-     * @throws IOException
+     * @throws ConnectionException
+     *             if an error occurred when establishing a connection
      */
-    public ConnectedTarget(Target target, int timeoutMillis) throws DeploymentException, InterruptedException, IOException {
+    public ConnectedTarget(Target target, int timeoutMillis) throws ConnectionException {
         super(target.getWebSocketDebuggerUrl(), timeoutMillis);
         this.target = target;
     }

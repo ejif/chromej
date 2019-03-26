@@ -60,20 +60,23 @@ public abstract class ConnectedWebSocket implements AutoCloseable {
      *            The URL to connect to
      * @param timeoutMillis
      *            How long to wait for a response to each command executed over the WebSocket
-     * @throws DeploymentException
-     * @throws InterruptedException
-     * @throws IOException
+     * @throws ConnectionException
+     *             if an error occurred when establishing a connection
      */
-    public ConnectedWebSocket(String webSocketDebuggerUrl, long timeoutMillis) throws DeploymentException, InterruptedException, IOException {
+    public ConnectedWebSocket(String webSocketDebuggerUrl, long timeoutMillis) throws ConnectionException {
         this.timeoutMillis = timeoutMillis;
         this.protocol = createProxy(WsProtocol.class, (proxy, method, args) -> {
             return createDomainProxy(method.getReturnType());
         });
 
         log.debug("Connecting to {}...", webSocketDebuggerUrl);
-        ClientManager.createClient()
-            .connectToServer(new Endpoint(), URI.create(webSocketDebuggerUrl));
-        initializationLatch.await();
+        try {
+            ClientManager.createClient()
+                .connectToServer(new Endpoint(), URI.create(webSocketDebuggerUrl));
+            initializationLatch.await();
+        } catch (DeploymentException | InterruptedException | IOException e) {
+            throw new ConnectionException(e);
+        }
         log.debug("Connected to {}.", webSocketDebuggerUrl);
     }
 
